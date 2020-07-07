@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="zxx">
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/5.8.4/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.8.4/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.8.4/firebase-auth.js"></script>
+
+    <script>
+        var config = {
+            apiKey: "AIzaSyDft5jJVpS3OYjtAe2jXqb8tdx2OAjl9uY",
+            authDomain: "loco-f1182.firebaseapp.com",
+            databaseURL: "https://loco-f1182.firebaseio.com",
+            projectId: "loco-f1182",
+            storageBucket: "loco-f1182.appspot.com",
+            messagingSenderId: "907665553764",
+        };
+
+        firebase.initializeApp(config);
+        var db = firebase.firestore();
+        var auth = firebase.auth();
+    </script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        .container1 {
+            max-width: 1200px;
+            margin: auto;
+            overflow: auto;
+            padding-left: 100px;
+        }
+
+        .gallery {
+            margin: 5px;
+            border: 1px solid #ccc;
+            float: left;
+            width: 300px;
+        }
+
+        .gallery img {
+            width: 100%;
+            height: auto;
+        }
+
+        .desc {
+            padding: 15px;
+            text-align: center;
+        }
+
+        .fa {
+            color: #ffff
+        }
+    </style>
+
+    <title>AzalVire</title>
+    <meta charset="UTF-8" />
+    <meta name="description" content=" Divisima | eCommerce Template" />
+    <meta name="keywords" content="divisima, eCommerce, creative, html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="shortcut icon" />
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:300,300i,400,400i,700,700i" rel="stylesheet" />
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/font-awesome.min.css" />
+    <link rel="stylesheet" href="css/flaticon.css" />
+    <link rel="stylesheet" href="css/slicknav.min.css" />
+    <link rel="stylesheet" href="css/jquery-ui.min.css" />
+    <link rel="stylesheet" href="css/owl.carousel.min.css" />
+    <link rel="stylesheet" href="css/animate.css" />
+    <link rel="stylesheet" href="css/style.css" />
+
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!--check function for each user-->
+
+    <script>
+        function shopkeeper() {
+            $("#shop_button")
+                .css("visibility", "visible")
+                .click(function () {
+                    window.location.replace("shopkeeper.html");
+                });
+            // this activates the shopkeeper button and redirects to his page
+        }
+
+        function customer() {
+            $("#cust_button")
+                .css("visibility", "visible")
+                .click(function () {
+                    window.location.replace("customer.html");
+                });
+        }
+
+        function delivery() {
+            $("#delivery_button")
+                .css("visibility", "visible")
+                .click(function () {
+                    window.location.replace("delivery.html");
+                });
+        }
+
+        function check() {
+            auth.onAuthStateChanged(function (user) {
+                if (user) {
+                    const id = user.uid;
+                    var role = localStorage.getItem("role");
+                    if (role == "Shopkeeper") {
+                        db.collection("stores")
+                            .doc(id)
+                            .get()
+                            .then(function (doc) {
+                                if (doc.data().role == "Shopkeeper") {
+                                    shopkeeper();
+                                }
+                            });
+                    }
+                    if (role == "Delivery") {
+                        db.collection("Delivery")
+                            .doc(id)
+                            .get()
+                            .then(function (doc) {
+                                if (doc.data().role == "Delivery") {
+                                    delivery();
+                                }
+                            });
+                    }
+                    if (role == "Customer") {
+                        db.collection("Customer")
+                            .doc(id)
+                            .get()
+                            .then(function (doc) {
+                                if (doc.data().role == "Customer") {
+                                    customer();
+                                }
+                            });
+                    }
+
+                    $("#login").css("visibility", "hidden");
+                    $("#logout")
+                        .css("visibility", "visible")
+                        .click(function () {
+                            auth
+                                .signOut()
+                                .then(function () {
+                                    // Sign-out successful.
+                                })
+                                .catch(function (error) {
+                                    alert(error);
+                                });
+                        });
+                } else {
+                    //window.location.replace("SignUp.html");
+                    console.log("no user");
+                }
+            });
+        }
+    </script>
+</head>
+
+<body onload="check()">
+    <!-- Page Preloder -->
+    <div id="preloder">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Header section -->
+     <header class="header-section"> 
+        <nav class="main-navbar2">
+            <div class="container">
+                <!-- menu -->
+                
+                    <div class="logo1">
+                        <img src="img/Logo/Logo3.jpeg" width="150" />
+                    </div>
+                
+            </div>
+        </nav>
+
+        <!-- <div class="col-xl-5 col-lg-6">
+            <div class="user-panel">
+
+
+                 <div class="up-item">
+								<a href="#" id="cust_button" style="visibility: hidden">&ensp; Profile </a>
+								<a href="shopkeeper.html" id="shop_button" style="visibility: hidden">Shopkeeper</a>
+								<a href="delivery.html" id="delivery_button" style="visibility: hidden">&ensp; delivery</a>
+							</div> -->
+            <!-- </div> --> 
+        </div>
+        </div>
+        </div>
+        </div>
+        <nav class="main-navbar">
+            <div class="container">
+                <!-- menu -->
+                <ul class="main-menu">
+                    <li><a href="#"><i class="fa fa-shopping-cart" aria-hidden="true"> Your Orders</i></a></li>
+                    <li><a href="#"><i class="fa fa-map-marker" aria-hidden="true"> Change Pincode</i></a></li>
+                    <li><a href="#"><i class="fa fa-shopping-bag" aria-hidden="true"> Cart</i></a></li>
+                    <li><a href="shoes.html"><i class="fa fa-sign-out" aria-hidden="true"> Logout</i></a>
+                    </li>
+                    <!--<li><a href="#">Pages</a>
+							<ul class="sub-menu">
+								<li><a href="./product.html">Product Page</a></li>
+								<li><a href="./category.html">Category Page</a></li>
+								<li><a href="./cart.html">Cart Page</a></li>
+								<li><a href="./checkout.html">Checkout Page</a></li>
+								<li><a href="./contact.html">Contact Page</a></li>
+							</ul>
+						</li>
+						<li><a href="#">Blog</a></li> -->
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <!-- Header section end -->
+
+    <!-- Hero section -->
+    <section class="hero-section">
+        <div class="hero-slider owl-carousel">
+            <div class="hs-item set-bg" data-setbg="img/bg.jpg">
+                <div class="container">
+                    <div class="row">
+
+                    </div>
+
+                </div>
+            </div>
+            <div class="hs-item set-bg" data-setbg="img/bg2.jpeg">
+                <div class="container">
+                    <div class="row">
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="hs-item set-bg" data-setbg="img/bg3.jpeg">
+                <div class="container">
+                    <div class="row">
+
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="container">
+                <div class="slide-num-holder" id="snh-1"></div>
+            </div> -->
+    </section>
+    <!-- Hero section end -->
+
+    <!-- letest product section -->
+    <section class="top-letest-product-section">
+        <div class="section-title">
+            <h2>Shops Near You</h2>
+        </div>
+        <div class="container1">
+            <div class="gallery">
+                <img src="./img/Shops/shop1.jpg" alt="" />
+                <div class="desc">Add a desc of the image</div>
+            </div>
+            <div class="gallery">
+                <img src="./img/Shops/shop2.jpg" alt="" />
+                <div class="desc">Add a desc of the image</div>
+            </div>
+            <div class="gallery">
+                <img src="./img/Shops/shop3.jpg" alt="" />
+                <div class="desc">Add a desc of the image</div>
+            </div>
+            <div class="gallery">
+                <img src="./img/Shops/shop4.jpg" alt="" />
+                <div class="desc">Add a desc of the image</div>
+            </div>
+            <div class="gallery">
+                <img src="./img/Shops/shop5.jpg" alt="" />
+                <div class="desc">Add a desc of the image</div>
+            </div>
+
+            <div class="gallery">
+                <img src="./img/Shops/shop6.jpg" alt="" />
+                <div class="desc">Add a desc of the image</div>
+            </div>
+        </div>
+    </section>
+    <!-- letest product section end -->
+
+    <!-- Banner section -->
+    <!-- <section class="banner-section">
+		<div class="container">
+			<div class="banner set-bg" data-setbg="img/banner-bg.jpg">
+				<div class="tag-new">NEW</div>
+				<span>New Arrivals</span>
+				<h2>STRIPED SHIRTS</h2>
+				<a href="#" class="site-btn">SHOP NOW</a>
+			</div>
+		</div>
+	</section> -->
+    <!-- Banner section end  -->
+
+    <!-- Footer section -->
+    <section class="footer-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-sm-6">
+                    <div class="footer-widget about-widget">
+                        <h2>About</h2>
+                        <p>
+                            Donec vitae purus nunc. Morbi faucibus erat sit amet congue
+                            mattis. Nullam frin-gilla faucibus urna, id dapibus erat iaculis
+                            ut. Integer ac sem.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-sm-6">
+                    <div class="footer-widget about-widget">
+                        <h2>Questions</h2>
+                        <ul>
+                            <li><a href="">About Us</a></li>
+                            <li><a href="">Track Orders</a></li>
+                            <li><a href="">Returns</a></li>
+                            <li><a href="">Jobs</a></li>
+                            <li><a href="">Shipping</a></li>
+                            <li><a href="">Blog</a></li>
+                        </ul>
+                        <ul>
+                            <li><a href="">Partners</a></li>
+                            <li><a href="">Bloggers</a></li>
+                            <li><a href="">Support</a></li>
+                            <li><a href="">Terms of Use</a></li>
+                            <li><a href="">Press</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-lg-3 col-sm-6">
+                    <div class="footer-widget contact-widget">
+                        <h2>Address</h2>
+                        <div class="con-info">
+                            <span>C.</span>
+                            <p>Your Company Ltd</p>
+                        </div>
+                        <div class="con-info">
+                            <span>B.</span>
+                            <p>1481 Creekside Lane Avila Beach, CA 93424, P.O. BOX 68</p>
+                        </div>
+                        <div class="con-info">
+                            <span>T.</span>
+                            <p>+53 345 7953 32453</p>
+                        </div>
+                        <div class="con-info">
+                            <span>E.</span>
+                            <p>office@youremail.com</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Footer section end -->
+
+    <!--====== Javascripts & Jquery ======-->
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.slicknav.min.js"></script>
+    <script src="js/owl.carousel.min.js"></script>
+    <script src="js/jquery.nicescroll.min.js"></script>
+    <script src="js/jquery.zoom.min.js"></script>
+    <script src="js/jquery-ui.min.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>
